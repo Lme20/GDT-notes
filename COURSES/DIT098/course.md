@@ -86,13 +86,11 @@ Games as cybernetic systems "the science of communication and control theory tha
 
 ### MDA Framework
 
-"Game as state machines" 
+"Game as state machines"
 
 - Mechanics -> Dynamics -> Aesthetics
 
 Provides an overview on the developer's and player's perspective.
-
-- 
 
 ### Game design patterns
 
@@ -100,7 +98,70 @@ Provides an overview on the developer's and player's perspective.
 
 ## L4 - Games as activities
 
-## L5 - Design goals and design methods
+## L5 - Design goals and design methods, playtesting
+
+**Differences between design and craftwork**
+
+- craft does not work with sketches
+- design goals more static
+- design goals are more implicit
+
+**Design methods**
+
+- jone's model of the design process
+  - Divergence: unclear goals, problem area vaguely defined, evaluation not relevant, "conceptualization"
+  - Transformation: Find a pattern from a number of alternatives, choosing goals, defining outer boundaries and a design space of the problem "prototyping"
+  - Convergence: focus on reaching the goal, evaluate alternatives, top-down, bottom-up "functionality, completeness and balance"
+
+### Game design methods
+
+**Jone's model applied to conceptualization**
+
+- Divergence
+  - Brainstorming
+    - List creation, Idea cards, Shout it out, Stream of consciousness, randomize it, Research, Extreme, measures
+  - Teamstorming
+  - Interaction relabelling, cultural
+    probes
+- Transformation
+  - Editing & refining
+- Convergence
+  - Focus on formal elements
+
+**Jone's model applied to prototyping**
+
+**Jone's model applied to playtesting**
+
+## Lecture 5B: Playtesting
+
+emergent systems are unpredictible
+
+playtesting should help overcome designer bias
+
+**testing but not playtesting:**
+
+- QA
+- Self-testing
+- Usability testing
+- Expert evaluation
+
+### **design process**
+
+- formative: what can be improved?
+- evaluative: how does this perform?
+
+> Each stage of the design process will have different needs for playtesting
+
+When playtesting:
+
+- have a target audience
+- be mindful of how many to hire
+- do they fit the current needs of the prototype?
+- have controls to make the most out of it
+- Have an analysis of the testing session
+- Have an idea of what to test (functionality M, Completeness MD, Balance MDA, fun A, Accessibility)
+-
+
 
 ## L6 - Gamification
 
@@ -110,8 +171,7 @@ Provides an overview on the developer's and player's perspective.
 
 - use examples of
 - "Your" defintion -- don't rely on the definitions of others to define your definition
-- 
-
+-
 
 ## A2 - Analyse the design behind two games: No thanks! and Catan
 
@@ -120,7 +180,6 @@ Provides an overview on the developer's and player's perspective.
 - define gameplay patterns you have identified
 - reference gameplay patterns you have identified by others
 
-
-MDA: 
+MDA:
 
 - examine

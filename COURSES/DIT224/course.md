@@ -338,7 +338,115 @@ The data structure is a tree, leaves hold geometry, internal nodes hold BVs that
   along x,y,z dimension
   simultaneously for each
   20 level
--
+
+**Sparse Voxel Octrees (SVO:s)**
+
+### Scene graphs
+
+A node hierarchy, often relfecting a logical hierarchical scene description
+
+- often in combination with BVH such as that each node has a BV
+
+Common hierarchical features include:
+
+- lights
+- materials
+- transforms
+- transparency
+- selection
+
+### Culling techniques
+
+(red objects are skipped)
+
+- view frustrum
+- detail
+- backface
+- occlusion
+- portal
+
+**Backface culling**
+
+- Can be used when back-faces are never seen (closed
+  objects)
+- OpenGL:
+  - glCullFace(GL_BACK);
+  - glEnable(GL_CULL_FACE);
+
+1. define front/back-faces
+   - Let counterclockwise vertex-winding order define front face
+     (right-hand rule).
+
+**View frustrum culling**
+
+- Bound every “natural” group of primitives
+  by a simple volume (e.g., sphere, box)
+- If a bounding volume (BV) is outside the
+  view frustum, then the entire contents of
+  that BV is also outside (not visible)
+
+**Portal culling**
+
+Essentially a refined view frustrum culling
+
+- frustrum gets smaller by each door
+
+Only renders objects which are visible by the camera in the view frustrum
+
+"Recursively do VFC through visible portals (i.e. doors & mirrors)"
+
+**Occlusion culling**
+
+Objects that lies completely “behind” another set of objects can be culled
+
+the algorithm uses some kind of occlusion representation $O_{R}$
+
+### Levels-of-Detail rendering (LODs)
+
+- Use different levels of detail at different
+  distances from the viewe. More triangles closer to the viewer
+
+Far LOD rendering: when an object is far away. Replace it with a quad of some color
+
+# LEC8 - Collision detection
+
+https://www.realtimerendering.com/intersections.html
+
+### Collision detection pipeline
+
+- Broad-phase algorithms
+
+  - sweep-and-prune, BVH
+- Narrow-phase algorithms
+- Continious collision detection
+- Specialized techniques
+
+**Bounding-volumes hierarchy**
+
+If accurate result is needed, turn to BVHs:
+
+- Use a separate BVH per object
+- Test BVH against other BVH for overlap
+  - For all intersecting BV leaves
+  - Use triangle-triangle intersection test
+
+**Sweep-and-prune (SAP) algorithm**
+
+Assume high frame-to-frame coherency, meaans that object is close to where it was in the previous frame
+
+- Collision overlap is done three times: One for the x,y-axes, and z-axes
+
+1. Sort all $b_{i}$ and $e_{i}$ into a list
+2. Traverse list from start to end
+3. When $b$ is encounted, mark corresponding object interval as active in an `active_interval_list`
+4. When an e is encountered, delete the interval in `active_interval_list`
+5. All object intervals simultaneously in `active_interval_ list` are overlapping on this axis!
+
+With this, sorting will be expensive: O(N*log N), frame-to-frame should therefore be exploited. In this case, resort with bubble-sort or insertion-sort, giving the expected complexity O(N).
+
+**CD for many objects**
+
+
 
 # Exam info
 
@@ -350,7 +458,17 @@ The data structure is a tree, leaves hold geometry, internal nodes hold BVs that
 - ray/box intersection
 - ray/triangle intersection
 - Dynamic separating axis theorem
+- Top-down BVH, AABSP-tree/bottom-up construction of BVH
 - Axis-aligned BSP tree (where are the geometries stored: in the leaves)
+- Scene graphs
+- Octrees/quadtrees
+- portal culling or culling techniques (occlusion is bonus material)
+  - Backface culling – screenspace is robust, eyespace non-robust
+- LODs (describe them)
+- What is sweep-and-prune used for ? broad-phase collision detection
+- 3 types of algorithms with rays (fast but not exact, why?)
+- Collision detection with BVH (know the pseudocode BVH/BV test collision between 2 objects), examples of bounding volumes (spheres, AABBs, OBBs, k-DOPs)
+- Pruning of non-colliding objects
 
 # Tutorials
 
