@@ -446,7 +446,72 @@ With this, sorting will be expensive: O(N*log N), frame-to-frame should therefor
 
 **CD for many objects**
 
+# LEC9 - Raytracing
 
+Quick terminology
+
+- ray casting: "shooting a ray"
+- ray tracing: "recursive process of shooting rays"
+  - in general, ray tracing means "following rays" even when part of more complicated methods
+
+concepts for computer-generating appearence of a virtual 3D scene:
+
+- Ray tracing
+  - backwards: tracing light beams backwards. i.e from the camera and all the way back to the light sources
+  - forwards:
+- Rasterization
+
+**Ray tracing:**
+
+- another rendering algorithm
+- fundamentally different from polygon rendering
+  - OpenGL (O(n))
+    - renders one triangle at a time
+    - local lighting per vertex
+    - z-buffers handles triangle sorting to appear on viewpoint
+  - Ray tracing (r O(log n))
+    - gives correct reflections
+    - renders one pixel at a time
+    - sorts per pixel
+    - global lighting equation (shadows, reflections, refraction)
+
+### Forward raytracing
+
+- photon mapping (tracing photons)
+
+### Backward raytracing
+
+### Finding closest point of intersection
+
+- slower approach: test all geometrical objects in the scene against each ray end select closest point
+- Use spatial data structures, e.g.:
+  - Bounding volume hierarchies (BVH) - AABBH
+  - Sparse Voxel Octrees
+  - (Octrees),
+  - kd trees
+  - Grids
+  - Or a combination (hierarchies) of those
+-
+
+### **Whitted ray tracing:**
+
+- trace(), and shade() recursion
+-
+
+**trace() in detail:**
+
+- use intersection testing for rays against objects
+- Intersection testing returns signed distance(s),
+  $t$, to the object
+- use smallest $t$, but > 0
+- more efficient approach: use spatial data structures
+- precision problem (**solution**):
+  - p can be incorrectly self-shadowed due to imprecision
+  - this can be fixed with: after p has been computed, update as: $p’=p+en$ ($n$ is normal at $p$, $e$ is small number >0)
+
+**shade() in detail:**
+
+-  
 
 # Exam info
 
