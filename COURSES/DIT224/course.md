@@ -511,7 +511,52 @@ concepts for computer-generating appearence of a virtual 3D scene:
 
 **shade() in detail:**
 
--  
+- c
+
+**When to use shade() or trace():**
+
+- when needing to spawn rays
+- Use camera parameters to compute rays
+
+**When does recursion stop?**
+
+- allow for max N levels of recursion
+- look at material parameters:
+  - if specular material color is (0,0,0) then object is not reflective, and won't need to spawn a reflection ray
+  - for each bounce, light is attenued:
+    - so, send a weight w, with recursion
+    - intially w=1, and after each bounce, w is attenued by shading
+
+### **reflection vector**
+
+- reflecting the incoming v around n:
+
+  - note that the incoming ray is sometimes called v depending on the direction of the vector
+  - r can be computer as v+(2a):
+    - $r = v - 2 (\hat{n} - v)\hat{n}$
+
+### Refraction
+
+- needs a transmission direction vector t
+- n, i, t, are unit vectors
+- $\eta_1$ & $\eta_2$ are reflection indices
+
+### supersampling
+
+- 
+
+### Jittered sampling
+
+- 
+
+### Summary of (whitted) ray tracing algorithm
+
+- 
+
+### Ray-AABB hierarchy test
+
+
+
 
 # Exam info
 
@@ -534,6 +579,10 @@ concepts for computer-generating appearence of a virtual 3D scene:
 - 3 types of algorithms with rays (fast but not exact, why?)
 - Collision detection with BVH (know the pseudocode BVH/BV test collision between 2 objects), examples of bounding volumes (spheres, AABBs, OBBs, k-DOPs)
 - Pruning of non-colliding objects
+- compute refraction and reflection vector
+- describe basic ray tracing algorithm
+- describe adaptive super sampling scheme
+- know what jittering is
 
 # Tutorials
 
