@@ -543,20 +543,11 @@ concepts for computer-generating appearence of a virtual 3D scene:
 
 ### supersampling
 
-- 
-
 ### Jittered sampling
-
-- 
 
 ### Summary of (whitted) ray tracing algorithm
 
-- 
-
 ### Ray-AABB hierarchy test
-
-
-
 
 # Exam info
 
@@ -1011,7 +1002,103 @@ Where $s$ is the shininess of the material, and we do a conversion to roughness 
 
 > There is no intermidium between materials, they are either dielectric or metal.
 
+## TUTORIAL 5: Render to texture
+
+**TASK 1: Setting up framebuffer objects**
+
+Just like when creating a vertex array object, we follow the same steps to create a framebuffer
+
+- Step 1: Generate framebuffer and bind it - bind it
+- Step 2: Attach color texture as color attachment 0 - set it as draw buffer
+- Step 3: Attach depth texture as depth attachment - bind it
+- Step 4: Bind default framebuffer just in case
+- Step 5: Setup framebuffers in InitGL() - specify how many to create, push them to fboList
+
+**TASK 2: Rendering the FBO**
+
+Now, we render from camera's point of view "draw the scene". This should be done before rendering the users camera.
+
+- Step 1: Get the first framebuffer object from fboList to render
+- Step 2: Bind the framebuffer
+- Step 3: Set the viewport to the framebuffer's size
+- Step 4: Set the clear color (background color)
+- Step 4: Clear the color and depth buffer
+
+Then we proceed by drawing the scene from the security camera's view
+
+- Step 1: draw scene using both shaderProgram and backgroundProgram
+- Step 2: get the material of the landing pad
+- Step 3: set the emission texture to the color texture of the framebuffer
+
+**TASK 3: Rendering the FBO fullscreen**
+
+Now, similar to task 2, we render the scene as sceen from the main camera on an FBO too. We will need to start by replacing the default FBO with the next one available in FboList.
+
+The replacement is simply done by getting the next framebuffer when drawing the scene from the camera. (Next framebuffer is 1 if we start with 0). The default framebuffer has the 'name' 0.
+
+- Step 1: Bind the default framebuffer
+- Step 2: Set the viewport to the framebuffer size
+- Step 3: set the clear color (background color)
+- Step 4: Clear the color and depth buffers
+- Step 5: Set the postFxShader as active program
+- Step 6: Bind the framebuffer to texture unit 0
+  - first set the texture unit to 0
+  - now bind the color texture and camera framebuffer to the active texture unit
+- Step 7: Draw a quad over the entire viewport "full screen quad"
+
+**TASK 4: Post-processing**
+
+Most common approach to render-to-texute. With the exception of shadow maps. Can be used for effects such as motion blurr, depth of field, bloom, godrays, simple color changes, magic mushrroms, etc.
+
+Post-processing is in practice very simple. Instead of rendering the scene to the screen, it is rendered to an off-screen render target of the same size. The render target is then used as a texture when rendering a full screen quad, and the fragment shader can be used to change the appearence.
+
+> Remember that a fragment shader is executed once for each fragment and for a full screen quad that is the same as each pixel on the screen.
+
+- There are several functions that can be used to achieve dfifferent effects:
+  - each can affect different properties to achieve a specific effect
+
+> Usually, textures are sampled with coordinates in the range [0,1]
+
+functions:
+
+- vec2 muchrooms: affects the sampling coordinatres and returns new coordinates (makes the screen look wavy)
+- vec3 blur: Uses a primitive box filter to blur the image. The current method is low quality and expensive. For a better purposes a separable blur is preferable.
+- vec3 grayscale: Simply returns the luminance (perceived brightness) of the input sample color
+- vec3 toSepiaTone: converts the color sample to sepia tone
+
+**TASK 5: Mosaic (post-processing)**
+
+A new effect is added in this step. Mosaic, where each square block of pixels shows the color of the same pixel.
+
+There are 2 approaches to tackle this effect:
+
+- mod() approach: You can resample the image (with nearest neighbors) to a smaller resolution, and then resampling it back to the final resolution (nearest neighbor). In that approach you would find what pixel position in the smaller resolution each final pixel corresponds to, and then find what pixel in the original resolution that position corresponds to.
+  - computes the pixel's position within its "bucket" or mosaic square
+  - EXAMPLE: if each mosaic square is 22x22 then `mod(inCoord, 22.0)` part calculates how far the pixel is from the top-left corner to its bucket.
+  - $Result = inCoord - mod(inCoord, bucketSize)$
+  -
+- floor() aproach: The other option includes dedicing that each pixel corresponds to a specific square bucket of pixels that all share the same value, and finding where the value is by seeing how far away from the start of the bucket you are.
+  - first calculates which mosaic bucket the pixel belongs to by dividing the pixel's coordinates by the mosaic (e.g. 22.0) and flooring the result (rounding to the nearest integer), them it multiplies the bucket index by the mosaic size to find the top-left corner of the bucket
+  - EXAMPLE: if a pixel at (45, 70) falls in the bucket (2,3), its coordinates are snapped to (44, 66) which is at the top-left corner of the bucket.
+  - $Result = floor (\frac{inCoord}{bucketSize})  \times bucketSize$
+
+> Both mod() and floor() are mathematically equivalent because both essentially give the same result. Where:
+>
+> - the modulus computes the remainder by dividing a by b
+> - Substracting this remainder (mod) aligns a to the nearest multiple of b
+>
+> $mod(a, b) = a - b \times floor(a/b)$
+>
+> where a = input coordinate
+>
+> b size of each mosaic block or "bucket"
+>
+> Essentially, each are equivalent because they figure out the same "remainder" or offset from within a block, just using different steps to obtain the result.
+
+In the case of motion blur as an effect, this can be obtained by sampling multiple frames or pixel offsets along the direction of motion, blending the samples to simulate the effect of movement over time. 
+
 ## Formulas
+
 
 - Normalize a vector (convert vector to unit vector), mostly used to represent a direction
 -
