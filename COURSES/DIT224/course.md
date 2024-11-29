@@ -549,9 +549,79 @@ concepts for computer-generating appearence of a virtual 3D scene:
 
 ### Ray-AABB hierarchy test
 
-
 ### Frameless rendering
 
+## LEC10: Raytracing (2nd)
+
+### Shadow ray
+
+![](assets/20241129_091431_image.png)
+
+- which object between the red ellipse and the light is detected does not matter
+- Any-hit-traversal instead of first-hit-traversal
+- An alternative could be to use shadow mapping
+- **Shadow cache (optimization)**: Assume shadow A hits the triangle
+  - you can store the triangle in a shadow cache
+
+### Bounding volume hierarchy
+
+- BVH traversal optimizations:
+
+### AABB hierarchy optimization
+
+- An AABB is the intersection of three slabs (2 in 2D)
+  - all boxes' slabs share the same plane normals
+- AABB/ray needs to compute one division per x,y and z
+  - precompute these once per ray, and use for entire AABB hierarchy
+
+### BVH traversal - skip-pointer trees
+
+- standard depth first tra
+
+### Split BHVs (SBVH)
+
+- typically AABB hierarchies but allows triangles to be part of several BVs (to minimze empty volume overlaps)
+
+### Surface Area Heuristics (SAH)
+
+- can be used to decide how to split a node to minimize ray traversal cost if a ray hits it. By minimizing the sum of the expected ray-traversal costs of the node's children after split.
+- SAH says that if a ray hits the parent, P, then the likelyhood of hitting a child I is: $\frac{AREA_i}{AREA_p}$
+
+### Axis-Aligned BSP trees (AA-BSP)
+
+- With this approach we automatically traverse the space in a rough sorted order along the ray
+- Done through simple code
+
+Code for traversing array front-to-back order:
+
+```cpp
+RayTreeIntersect(Ray, Node, min, max)
+{
+  if(node==NULL) return no_intersection;
+  if(node is leaf)
+  {
+    test all primitives in leaf, discard if not between min and max;
+    return closest intersection point if any;
+  }
+  dist = signed distance along Ray to cutting plane of Node;
+  near = child of Node that contains ray origin;
+  far = child of Node that does not contain ray origin;
+  if(dist>0 and dist<max) // interval intersects plane of Node
+  {
+    hit=RayTreeIntersect(Ray,near,min,dist); // test near side
+    if(hit) return hit;
+    return RayTreeIntersect(Ray,far,dist,max); // test far side
+  }
+  else if(dist>max or dist<0) // whole interval is on near side
+    return RayTreeIntersect(Ray,near,min,max);
+  else // whole interval is on far side
+    return RayTreeIntersect(Ray,far,min,max);
+}
+```
+
+### Grid traversal algorithm
+
+- A modified line algorithm can be used
 
 
 
@@ -580,6 +650,15 @@ concepts for computer-generating appearence of a virtual 3D scene:
 - describe basic ray tracing algorithm
 - describe adaptive super sampling scheme
 - know what jittering is
+- What a skip-pointer tree is
+- Know what shadow cache is
+- What a Kd-tree is
+- Be able to describe ray/BVH intersection test
+- Fresnel effect: Metal vs dielectrics (how do dielectrics behave? How does metal behave?)
+- Describe how ray trace using constructive solid geometry
+- Draw grid (plain/hierarchical/recursive)
+  - mailboxing
+- Draw all our other spatial data structures (octree/quadtree, AABSP-tree (kd-tree), polygon-aligned BSP tree, Sphere/AABB/OBBtree)
 
 # Tutorials
 
@@ -1108,18 +1187,13 @@ There are 2 approaches to tackle this effect:
 
 In the case of motion blur as an effect, this can be obtained by sampling multiple frames or pixel offsets along the direction of motion, blending the samples to simulate the effect of movement over time.
 
-
-
 ## TUTORIAL 6: SHADOW MAPS
 
 TASK 1:
 
-
-TASK 2: 
-
+TASK 2:
 
 ## Formulas
-
 
 - Normalize a vector (convert vector to unit vector), mostly used to represent a direction
 -
