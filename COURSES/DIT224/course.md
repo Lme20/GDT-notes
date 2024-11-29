@@ -549,6 +549,12 @@ concepts for computer-generating appearence of a virtual 3D scene:
 
 ### Ray-AABB hierarchy test
 
+
+### Frameless rendering
+
+
+
+
 # Exam info
 
 - z-buffer algorithm
@@ -1006,6 +1012,11 @@ Where $s$ is the shininess of the material, and we do a conversion to roughness 
 
 **TASK 1: Setting up framebuffer objects**
 
+- Previous tutorials include rendering to a default framebuffer. part of the window system and used to **render directly** to the screen.
+- This tutorial will be about rendering to a framebuffer object (offscreen rendering targets).
+  - Used to **render into textures**, enabling advanced effects like post-processing, shadow mapping, etc.
+  - You can attach custom color, depth, or stencil textures
+
 Just like when creating a vertex array object, we follow the same steps to create a framebuffer
 
 - Step 1: Generate framebuffer and bind it - bind it
@@ -1095,7 +1106,17 @@ There are 2 approaches to tackle this effect:
 >
 > Essentially, each are equivalent because they figure out the same "remainder" or offset from within a block, just using different steps to obtain the result.
 
-In the case of motion blur as an effect, this can be obtained by sampling multiple frames or pixel offsets along the direction of motion, blending the samples to simulate the effect of movement over time. 
+In the case of motion blur as an effect, this can be obtained by sampling multiple frames or pixel offsets along the direction of motion, blending the samples to simulate the effect of movement over time.
+
+
+
+## TUTORIAL 6: SHADOW MAPS
+
+TASK 1:
+
+
+TASK 2: 
+
 
 ## Formulas
 
