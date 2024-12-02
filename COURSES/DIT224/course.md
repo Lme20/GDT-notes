@@ -622,8 +622,73 @@ RayTreeIntersect(Ray, Node, min, max)
 ### Grid traversal algorithm
 
 - A modified line algorithm can be used
+- choose a good grid resolution
 
+**Hierarchical and recursive grids**
 
+- used so as to avoid the "teapot-in-the-stadium" problem
+
+![](assets/hierarchical.png)
+
+### Which spatial data structure is best?
+
+Depends on implementation, the type of scene, how complex shading is, etc.
+
+- KD-trees:
+
+  - fastest to traverse, small memorywise, slow to build
+- AABB-hierarchies:
+
+  - fast to build, sslower to traverse. Fast to update for moving rigid objects
+  - RTX: uses AABB hierarchy
+  - GPU: linear-BVH, hierarchical LBVH. sorts primitives by morton order
+  - CPU: ray tracing, split-BVHs (SBVH)
+- Grids:
+
+  - Fast to build, middle fast to traverse, typically needs to be hierarchical/recursive
+  - hierarhical grids can be very fast to update for moving ridig objects
+  - Recursive teees are surprisingly slower than than hierarchical grids in terms of required computations. Slow to rebuild objects.
+- Sparse voxel octres SVO and SVDAGs:
+
+  - Very fast to traverse
+  - DAGs have small memory consumption
+  - slow to rebuold and does not store triangles
+
+### Faster grid traversal using Proximity clouds/Distance fields
+
+### Materials
+
+- dielectrics (glass, platic, stone, wood, water, etc)
+- Metals (conductive)
+- We use frenel equations to deduce how much reflects and how much refracts
+  - can compute polarized and unpolarized values for the light
+  - Metal: rgb-dependent fresnel effect
+  - dielectrics: not rgb-dependent
+- reflections in metals will be highly colored by the material
+
+![](assets/20241129_104749_image.png)
+
+### Geometry: Constructive Solid Geometry (CSG)
+
+- blobs:
+- quadrics
+- higher order polynomial surfaces
+-
+
+**fractal landscapes**
+
+- Perlin Noises 1-D: Noise signal with certain frequency and amplitude
+  - Next oocctace, should not be exactly the double frequency
+  - For ridged fractals: $c-||N(x)-c||$
+- Perlin Noises in 2D: add the amplitudes
+- Simulating materials:
+  - Noise (1 octave): worn metal, water wave
+  - Sum[1/f * noise]: rocks, mountains, clouds
+  - Sin( x + Sum[1/f *|noise|]): turbulent flows, fire, marble
+  - Sum[1/f * |noise|]: turbulent flows, fire, marble, clouds
+- Adding water:
+
+**Soft shadows**
 
 # Exam info
 
@@ -651,14 +716,15 @@ RayTreeIntersect(Ray, Node, min, max)
 - describe adaptive super sampling scheme
 - know what jittering is
 - What a skip-pointer tree is
-- Know what shadow cache is
 - What a Kd-tree is
 - Be able to describe ray/BVH intersection test
-- Fresnel effect: Metal vs dielectrics (how do dielectrics behave? How does metal behave?)
+- describe the Fresnel effect: Metal vs dielectrics (how do dielectrics behave? How does metal behave?)
+  - draw the angle with intensity diagram for both dielectrics/metals (fresnel reflectance)
 - Describe how ray trace using constructive solid geometry
 - Draw grid (plain/hierarchical/recursive)
   - mailboxing
 - Draw all our other spatial data structures (octree/quadtree, AABSP-tree (kd-tree), polygon-aligned BSP tree, Sphere/AABB/OBBtree)
+- why can shadow rays be faster than othe rays?
 
 # Tutorials
 
@@ -1189,9 +1255,79 @@ In the case of motion blur as an effect, this can be obtained by sampling multip
 
 ## TUTORIAL 6: SHADOW MAPS
 
-TASK 1:
+TASK 1: Rendering depth
 
-TASK 2:
+**TASK 2: Using the shadow map**
+
+How to use the implemented shadow map: each time a fragment is drawn, compare fragment depth to corresponding value on shadow map. If current fragment is further from light than value in shadow map, it's in shadow, otherwise it's lit.
+
+To find corresponding value in shadow map, transform coordinates from camera view-space to shadow map's texture space:
+
+- inverse(viewMatrix): transforms from camera view-space to world-space
+- lightViewMatrix: transforms world-space to light view space
+- lightProjectMatrix: transforms from light view space to light clip space
+- lightMatrix: transforms a coordinate from camera view space to light clip space
+
+Use translate() and scale() matrices to remap from clip space to texture-coordinate space.
+
+**TASK 3: Shadow acne**
+
+How to fix "shadow acne", solution involves "pushing" the polygons slightly away from the light source when drawing the shadow map.
+
+- Set polygon offset befor drawing shadow map
+- Disable polygon offset after drawing shadow map
+
+**TASK 4: Peter-panning**
+
+High values in the offset factor or offset units can lead to other kinds of artefacts. E.g. setting them to too high values leads to what is called Peter-panning, where an object looks to be floating above the surface, even if it's actually in contact with it.
+
+In simple terms:
+the offset units Factor and Units can trigger Peter-Panning if their values are too high.
+
+**TASK 5: Outisde the shadow map, using perspective projection**
+
+Peter-Panning can be tackled as follows:
+
+- change the clamping mode of the shadow map texture, this is done inside display(), where shadow map parameters are set
+
+**TASK 6: Use a spotlight**
+
+A spotlight will cast light inside a limited code. Cone is defined by light's direction, and an angle.
+
+To see whether a fragment is lit by a spot light, we need to compute the angle between the vector connecting the light to the fragment and the light's direction. We then compare the angle to the spotlight's cone's opening angle.
+
+1. compute light angle: $cosAngle = dot(normalize(posToLight), -viewSpaceLightDir)$
+2. compute hard border attenuation: $
+   \text{attenuation} =
+   \begin{cases}
+   1.0 & \text{if } \cos(\theta) > \text{spotOuterAngle} \\
+   0.0 & \text{otherwise}
+   \end{cases}$
+3. Set border attenuation: $attenuation = smoothstep(spotOuterAngle, spotInnerAngle, cosAngle)$
+4. visibility update: $visibility = visibility \times attenuation$
+
+> **Perspective projection:** Suitable for point or spotlight shadows as the light originates from a single point and spreads outward.
+>
+> **Orthographic projection:** Ideal for directional lights, (e.g. sunlight) as rays are essentially parallel, and the shadowmap needs to cover a large, uniform area without perspective distortion.
+
+**Types of projections:**
+
+![](https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Comparison_of_graphical_projections.svg/420px-Comparison_of_graphical_projections.svg.png)
+
+**Types of lights:**
+
+![3d - Specular lights on cube in opengl es - Stack Overflow](https://i.sstatic.net/3udUJ.gif)
+
+**TASK 7: Calculating shadow coords in the vertex shader**
+
+
+**TASK 8: Hardware shadow map lookup**
+
+
+**TASK 9: Percentage closer filtering**
+
+
+**TASK 10: GUI**
 
 ## Formulas
 
