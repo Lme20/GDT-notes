@@ -162,7 +162,6 @@ When playtesting:
 - Have an idea of what to test (functionality M, Completeness MD, Balance MDA, fun A, Accessibility)
 -
 
-
 ## L6 - Gamification
 
 # Assignments

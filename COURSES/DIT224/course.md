@@ -725,6 +725,18 @@ Depends on implementation, the type of scene, how complex shading is, etc.
   - mailboxing
 - Draw all our other spatial data structures (octree/quadtree, AABSP-tree (kd-tree), polygon-aligned BSP tree, Sphere/AABB/OBBtree)
 - why can shadow rays be faster than othe rays?
+- Rendering equation (know how to explain all its components)
+- "Naive" Monte Carlo sampling (exponentially growing ray tree)
+- Path tracing (why is it good compared to naive Monte Carlo sampling. Overall algorithm)
+- Photon mapping (short summary of algorithm, Why 2 maps (global + caustics) are needed)
+- Bidirectional Path Tracing, Metropolis Light Transport (just their names)
+- Denoising by Final Gather or AI:
+  - Final Gather – sample indirect illumination at some positions in the world (these are
+    the final-gather points). Then, at each ray hit, estimate indirect illumination by
+    interpolation from nearby final-gather points.
+  - AI: use some existing Deep Neural Network solution that denoises your images for
+    your kind of scenes.
+-
 
 # Tutorials
 
@@ -1320,11 +1332,50 @@ To see whether a fragment is lit by a spot light, we need to compute the angle b
 
 **TASK 7: Calculating shadow coords in the vertex shader**
 
+Just move `vec4 shadowMapCoord` to the shading.vert file, redaclare it as '`in vec4 shadowMapCoord`' in shading.frag and declare it as '`out vec4 shadowMapCoord`' in shading.vert. Do not forget to declare `uniform mat4 lightMatrix` in shading.vert too.
 
 **TASK 8: Hardware shadow map lookup**
 
+Here we use OpenGL's built in functions to perform comparisons with the depth from the shadow map automatically instead of manually.
+
+1. Change the setup of the shadow map in InitGL(), configure shadow map depth texture for depth comparison
+2. in fragment shader, change the type of texture sampler to use.
+
+Type of overload used for `textureProj`:
+
+`float textureProj(sampler2DShadow sampler, vec4 P, [float bias]);`
+
+- **sampler2DShadow:** indicates the texture of the shadow map, where depth and comparison is automatically performed
+- **vec4 P:** 4D projected texture coordinates (for perspective division)
+- **bias:** level of detail computation or to adjust depth comparison precision.
+
+The implementation with `sampler2DShadow` and `textureProj` enables handling depth comparisons and helps simplifying the shader logic.
+
+- textureProj(sampler2DShadow, vec4 P) for perspective-correct depth lookup
+- texture parameters (GL_TEXTURE_COMPARE_FUNC, GL_TEXTURE_COMPARE_MODE) to configure shadow map behaviour.
+
+In summary, the following changes are:
+
+1. setting texture parameters for the shadow map:
+
+- `glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);` To configure the depth comparison function to pass if the sampled depth is less than or equal to  the reference depth
+- `glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);` To enable automatic depth comparison instead of fetching raw depth values
+
+2. Change the sampler type:
+
+- `layout(binding = 10) uniform sampler2DShadow shadowMapTex;` which indicates the texture used for shadow comparison.
+- `textureProj`: divides the shadowMapCoord by its w component (shadowMapCoord.xyz / shadowMapCoord.w)
+
+  - here, we it then performs depth comparison automatically using the configured `GL_TEXTURE_COMPARE_FUNC` and returns the visibility value
 
 **TASK 9: Percentage closer filtering**
+
+PCF (Percentage Closer Filtering) is implemented here to solve the "blocky" look of shadows when reducing the shadow map resolution to 128x128.
+
+1. The texture filtering mode for the shadow map GL_NEAREST in the FboInfo class should be changed to GL_LINEAR.
+
+Percentage-Closer Filtering (PCF) can be used to produce pseudo-soft shadows. Instead of sampling a single shadow-map texel, it compares the surface depth against the depths of the four nearest texels, generating 0 (shadow) or 1 (light) for each. These results are then bilinearly interpolated to determine the light's contribution, creating an artificial soft shadow. The softness depends on the shadow map resolution and other factors, with higher resolution leading to narrower penumbrae. PCF mimics soft shadows from area lights by blending shadow map samples for point or directional lights.
+
 
 
 **TASK 10: GUI**
