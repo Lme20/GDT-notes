@@ -1245,7 +1245,7 @@ There are 2 approaches to tackle this effect:
   - EXAMPLE: if each mosaic square is 22x22 then `mod(inCoord, 22.0)` part calculates how far the pixel is from the top-left corner to its bucket.
   - $Result = inCoord - mod(inCoord, bucketSize)$
   -
-- floor() aproach: The other option includes dedicing that each pixel corresponds to a specific square bucket of pixels that all share the same value, and finding where the value is by seeing how far away from the start of the bucket you are.
+- floor() aproach: The other option includes deciding that each pixel corresponds to a specific square bucket of pixels that all share the same value, and finding where the value is by seeing how far away from the start of the bucket you are.
   - first calculates which mosaic bucket the pixel belongs to by dividing the pixel's coordinates by the mosaic (e.g. 22.0) and flooring the result (rounding to the nearest integer), them it multiplies the bucket index by the mosaic size to find the top-left corner of the bucket
   - EXAMPLE: if a pixel at (45, 70) falls in the bucket (2,3), its coordinates are snapped to (44, 66) which is at the top-left corner of the bucket.
   - $Result = floor (\frac{inCoord}{bucketSize})  \times bucketSize$
@@ -1376,7 +1376,8 @@ PCF (Percentage Closer Filtering) is implemented here to solve the "blocky" look
 
 Percentage-Closer Filtering (PCF) can be used to produce pseudo-soft shadows. Instead of sampling a single shadow-map texel, it compares the surface depth against the depths of the four nearest texels, generating 0 (shadow) or 1 (light) for each. These results are then bilinearly interpolated to determine the light's contribution, creating an artificial soft shadow. The softness depends on the shadow map resolution and other factors, with higher resolution leading to narrower penumbrae. PCF mimics soft shadows from area lights by blending shadow map samples for point or directional lights.
 
-
+- Depth values are non-linear due to perspective projection, blending them directly doesn't produce meaningful comparisons.
+- OpenGL compares the reference value to the actual depths at the nearest samples, then interpolates the comparison results to create soft shadows
 
 **TASK 10: GUI**
 
