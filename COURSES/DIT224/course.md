@@ -690,6 +690,20 @@ Depends on implementation, the type of scene, how complex shading is, etc.
 
 **Soft shadows**
 
+## LEC13: Graphics Hardware
+
+**Perspective-correct Interpolation of texture coordinates**
+
+**GPU architecture:**
+
+- several cores consisting of many ALUs
+- GPU uses parallelism by using 10,000s of ALUs to speedrun computations
+- bandwidth (cost of memory accesses) is often the main problem
+
+**Graphics hardware architectures:**
+
+**Taxonomy of Hardware:**
+
 # Exam info
 
 - z-buffer algorithm
@@ -736,7 +750,27 @@ Depends on implementation, the type of scene, how complex shading is, etc.
     interpolation from nearby final-gather points.
   - AI: use some existing Deep Neural Network solution that denoises your images for
     your kind of scenes.
--
+- Perspective-correct interpolation (ex: textures):
+  - E.g. linearly interpolate ($u_2/w_2x v_i/w_2x 1/w_i$) in screenspace from each triangle vertex 1:
+- Taxonomy: sort firsit, middle, last fragment, last image
+- Bandwith (why it is a problem and how to "solve" it)
+- Be able to sketch the graphics pipeline functional blocks and relation to hardware (slide 63 in LEC13)
+- What parts does the real-time graphics pipeline have?
+- separating axis theorem (know how to describe it)
+- Normal transforms
+- 4x4 matrices (projection matrix, camera-to-world matrix, world-to-model matrix, world-to-camera and model-to-world matrix)
+- understand the simple DDA algorithm
+- bresenhams line-drawing algorithm
+- Phong shading - phong's vs blinngs model
+- ambient, diffuse, specular, emission
+- OpenGL - triangle (vertex order and facing)
+- how to achieve blending and transparency
+- know equations for ray, sphere, cilinder, plane, triangle
+- Geometrical tests:
+- sweep-and-prune (know how to explain it, what is it used for)
+- cascaded shadow maps (explain it)
+- planar reflections
+- Emission (know how to explain it, what are the 3 other terms in a real-time shading model)
 
 # Tutorials
 
@@ -1380,6 +1414,116 @@ Percentage-Closer Filtering (PCF) can be used to produce pseudo-soft shadows. In
 - OpenGL compares the reference value to the actual depths at the nearest samples, then interpolates the comparison results to create soft shadows
 
 **TASK 10: GUI**
+
+## TUTORIAL 7:  HEIGHTFIELD
+
+NOTES:
+
+- vertex attributes (texture coordinates, normals) computer in the fragment shader. This when zooming out, causes the appearence of the textures despute being in wireframe mode, especially due to the density of lines from the vertices.
+- Initial mesh displacemnt is set to y = 0. It is only modified in the vertex shader with height.
+- Heightfield shaders: heightfield.vert, shading.frag (shared with other objects),
+- u,v: texture coordinates, they map 2d texture to 3d mesh
+- 0,1: range of u,v coordinates (0 = left or bottom, 1= right or top)
+- tessalation: density of the mesh (higher tessaltion = smoother terrain, more vertices)
+- we generate the heightfield through an indexed array of triangles
+- Heightfield: no matrix but a mesh (grid of vertices)
+- terrainModelViewProjectionMatrix: combines view, model and projection transformations to position the terrain in the world and project it into the screen
+- terrainModelMatrix: we scale the terrain in x,y,z directions
+- normalMatrix: used to transform lightning calculations
+- we perform transform in several areas: vertex positions are transformed in heightfield.vert, normal transforms, position transforms for lighting using modelViewMatrix. Tree Position Transformations also through the default shader. Indirect map transformation for indirect illumination.
+
+### Mesh
+
+**steps (Mesh):**
+
+1. HeightField::generateMesh(int tesselation) inside heightfield.cpp creates a flat grid mesh with positions [-1, +1] for x and z, while y is initialized to 0
+
+- texture coordinates are in $[0, 1]^2$
+- normalized in a range of [-1, +1]
+
+2. Traingle generation: we use an indexed array
+
+3. Mesh is scaled in the vertex shader by using modelViewProjectionMatrix.
+
+the height scale is set at 10.0f in the y-coordinate of world space, it should match the shader's heightscale uniform
+
+the mesh scaling is done in the heightfield vertex shader.
+
+### Vertex shader
+
+**steps (Vertex shader):**
+
+the size of the heightfield is defined by:
+
+- texture resolution
+- mesh tesselation
+- world space scaling
+
+1. added heightfield sampling of vertex positions displayed along y-axis based on the height sampled from heightMap texture and scaling by heightScale
+
+- the texture coordinates define the sampling point of the heightfield
+
+2. We compute normals procedurally by sampling the heightfield in diretions u and v
+3. We calculate tangent vectors from the obtained heights and we then derivde the normal via cross product
+4. We then use the resulting normal to transform it into view space for shading
+
+### Shading
+
+1. diffuse texture: we use the diffuseMap in the fragment shader for the base color
+2. Lighting: We make use of the shading.frag for consistent lighting
+3. Normals: the world-space normals are computed from the heightfield and transformed into view space for shading
+
+### Adding a tree
+
+adding a tree object to the scene:
+
+* we sample the Heightfield texture and store only the matching positions based on the height range.
+* the positions are mapped based on the terrain's scaling properties
+
+- We store a list of tree positions
+- we generate tree positions based on valid height ranges sampled from the heightfield texture.
+  - These positions are determined using normalized texture coordinates (`u, v`) that are mapped to world-space coordinates, ensuring alignment with the heightfield's scale in the x, y, and z directions. The tree placement respects a specified height range (`minHeight` and `maxHeight`) on the y-axis.
+- we count the number of trees to force a limit
+- the generation of trees has grid-based sampling and randomness
+
+1. **in main.cpp, implement generateTreePositions() to iterate over a grid to sample tree positions:**
+   1. Grid-resolution: we divide the grid into 50x50 cells. Each cell is sampled.
+   2. Randomness: we add randomness where offsets are applied within each cell grid
+   3. We filter positions by height range so that the trees are placed in specific ranges
+   4. transform to world coordinates: the u,v coordinates and height are transformed into world-space coordinates
+2. **Height sampling (heightfield.cpp): we first clamp texture coordinates**
+   1. we ensure that u,v are within [0,1] coordinates
+   2. we fetch height data from the height map texture in x,y pixel indices
+   3. we scale heigh using heightScale to match the hieghtfield's scaling.
+3. **Render trees:**
+   1. we iterate through positions in the list treePositions
+   2. for each position, we construct a model matrix with scaling 0.2f and render the model
+   3. We apply the computer matrix to the shader
+
+
+
+
+
+1. modify initialize() by first declaring the tree object, store its positions, loading the tree model and generating it.
+2. we modify the HeightField class to add a method that computes the tree positions based on the heightmap. Trees will only appear where the height of the terrain is within a specified range
+
+-- modify heightfield.h by adding a declaration to retrieve height values at a given ppint u,v on the heightfield
+-- modifiy heightfield.cpp by adding a method to sample the terrain height at u,v coordinates
+-- in initialize(), add a function to randomly scatter trees only at the specific height ranges
+
+3. generate trees by iterating over stored positions and render the trees, this is done in display().
+
+-- first, create a function for the rendering logic for the trees
+-- use the function in display to render the trees
+
+for the tree object, we are just using the default shaders.
+
+
+Wireframe:
+
+- it is enabled in a way that only applies to the generated mesh
+- it was originally applied globally, whuch made the full screen quad also visible
+- mipmap levels and texture filtering cause the textures to appear when zooming out of the enabled wireframe
 
 ## Formulas
 

@@ -1,0 +1,404 @@
+# C++ GUIDEBOOK
+
+## FUNCTIONS
+
+### Basic function
+
+```cpp
+// Syntax: return_type function_name(parameter_list) { function_body }
+int add(int a, int b) {
+return a + b;
+}
+```
+
+### Inline function
+
+Defined with the inline keyword for performance optimization.
+
+```cpp
+inline int multiply(int a, int b) {
+    return a * b;
+}
+```
+
+### Function overloading
+
+Multiple functions with the same name but different parameters.
+
+```cpp
+int calculate(int a, int b) {
+    return a + b;
+}
+
+double calculate(double a, double b) {
+    return a * b;
+}
+```
+
+### Lambda function
+
+```cpp
+auto lambda = [](int a, int b) { return a + b; };
+std::cout << lambda(3, 5);
+```
+
+### Checklist
+
+* [ ] Decide return type and parameters.
+* [ ] Use const reference parameters (`const T&`) for non-primitive types to avoid copies.
+* [ ] Inline for small functions to reduce overhead.
+
+## Memory Management
+
+### CASE 1: Allocating single object
+
+```cpp
+int* ptr = new int(42); // Allocate memory for an integer and initialize it
+delete ptr; // Deallocate memory
+```
+
+### CASE 2: Allocating arrays
+
+```cpp
+int* arr = new int[5]; // Allocate array of 5 integers
+delete[] arr; // Deallocate array
+```
+
+### CASE 3: Smart pointers
+
+```cpp
+#include <memory>
+std::unique_ptr<int> uptr = std::make_unique<int>(42); // Automatically deallocated
+std::shared_ptr<int> sptr = std::make_shared<int>(42); // Shared ownership
+```
+
+### Checklist - good practice
+
+* [ ] Always pair`new` with`delete`.
+* [ ] Prefer smart pointers for automatic memory management.
+* [ ] Avoid raw pointers unless necessary.
+
+## Methods (Member functions)
+
+### Instance Method
+
+```cpp
+class MyClass {
+public:
+    void greet() {
+        std::cout << "Hello, World!" << std::endl;
+    }
+};
+```
+
+### Static Method
+
+Shared by all instances; no need for an object to call it.
+
+```cpp
+class MyClass {
+public:
+    static void greet() {
+        std::cout << "Hello from a static method!" << std::endl;
+    }
+};
+```
+
+### Const Method
+
+Guarantees that the method won't modify the object.
+
+```cpp
+class MyClass {
+    int value;
+public:
+    int getValue() const {
+        return value;
+    }
+};
+```
+
+### Checklist - Keep in mind
+
+* [ ] Use `const` for methods that don't modify the object.
+* [ ] Use `static` for utility functions that don't need object data.
+
+## OOP - Concepts
+
+### Classes
+
+```cpp
+class MyClass {
+private:
+    int value;
+
+public:
+    MyClass(int val) : value(val) {} // Constructor
+    ~MyClass() {} // Destructor
+};
+```
+
+### Inheritance
+
+```cpp
+class Base {
+public:
+    void show() {
+        std::cout << "Base class" << std::endl;
+    }
+};
+
+class Derived : public Base {
+public:
+    void show() {
+        std::cout << "Derived class" << std::endl;
+    }
+};
+```
+
+### Polymorphism
+
+```cpp
+class Base {
+public:
+    virtual void display() {
+        std::cout << "Base display" << std::endl;
+    }
+};
+
+class Derived : public Base {
+public:
+    void display() override {
+        std::cout << "Derived display" << std::endl;
+    }
+};
+```
+
+### Checklist - good practices
+
+* [ ] Always define destructors as virtual for base classes in polymorphic hierarchies.
+* [ ] Prefer composition over inheritance for better flexibility.
+
+## Standards Template Library (stl)
+
+### Vectors
+
+```cpp
+#include <vector>
+std::vector<int> vec = {1, 2, 3};
+vec.push_back(4);
+vec.pop_back();
+```
+
+### Maps
+
+```cpp
+#include <map>
+std::map<int, std::string> myMap = {{1, "One"}, {2, "Two"}};
+myMap[3] = "Three";
+```
+
+### Iterators
+
+```cpp
+for (auto it = vec.begin(); it != vec.end(); ++it) {
+    std::cout << *it << " ";
+}
+```
+
+## Control Flow
+
+### Conditionals
+
+```cpp
+if (x > 0) {
+    std::cout << "Positive";
+} else {
+    std::cout << "Non-positive";
+}
+```
+
+### Loops
+
+```cpp
+for (int i = 0; i < 10; ++i) {
+    std::cout << i << " ";
+}
+
+while (x > 0) {
+    x--;
+}
+
+do {
+    x++;
+} while (x < 10);
+```
+
+### Switch Case
+
+```cpp
+switch (x) {
+    case 1: std::cout << "One"; break;
+    case 2: std::cout << "Two"; break;
+    default: std::cout << "Other"; break;
+}
+```
+
+## Input/Output
+
+### File handling
+
+```cpp
+#include <fstream>
+std::ofstream outFile("output.txt");
+outFile << "Hello, file!";
+outFile.close();
+```
+
+### Console input/output
+
+```cpp
+std::cout << "Enter value: ";
+std::cin >> value;
+```
+
+## Error handling
+
+### Try-catch
+
+```cpp
+try {
+    throw std::runtime_error("An error occurred");
+} catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+}
+```
+
+## Concurrency
+
+### Basic threading
+
+```cpp
+#include <thread>
+void task() {
+    std::cout << "Thread running" << std::endl;
+}
+
+std::thread t1(task);
+t1.join();
+```
+
+## Templates
+
+Allows to write reusable and generic code that can work with any data type.
+
+- enable type-independent programming
+- useful for functions or classes that perform the same operations regardless of the data type.
+
+### Function templates
+
+**Syntax:**
+
+```cpp
+template <typename T>
+T add(T a, T b) {
+    return a + b;
+}
+```
+
+- `template <typename T>` <typename T>: Declares a template with a type parameter `T`.
+- `T:` Represents a placeholder for a data type that will be specified when the function is called.
+
+**Usage:**
+
+```cpp
+std::cout << add<int>(3, 5);       // Outputs: 8
+std::cout << add<double>(2.5, 3.5); // Outputs: 6.0
+```
+
+* The compiler generates a separate version of the function for each data type used.
+* Templates support multiple type parameters
+
+### Class templates
+
+Can define a blueprint for a class that can operate on any data type.
+
+**Syntax:**
+
+```cpp
+template <typename T>
+class MyClass {
+    T value;
+public:
+    MyClass(T v) : value(v) {}
+    void display() {
+        std::cout << "Value: " << value << std::endl;
+    }
+};
+```
+
+**Usage:**
+
+```cpp
+MyClass<int> obj1(42);
+obj1.display(); // Outputs: Value: 42
+
+MyClass<std::string> obj2("Hello");
+obj2.display(); // Outputs: Value: Hello
+```
+
+- multiple type parameters can be specified
+
+### Template specialization
+
+Used to define a custom implementation for a specific data type
+
+Example: specialized class template
+
+```cpp
+template <typename T>
+class MyClass {
+public:
+    void display() {
+        std::cout << "Generic template" << std::endl;
+    }
+};
+
+// Specialization for int
+template <>
+class MyClass<int> {
+public:
+    void display() {
+        std::cout << "Specialized template for int" << std::endl;
+    }
+};
+```
+
+**Usage:**
+
+```cpp
+MyClass<double> obj1;
+obj1.display(); // Outputs: Generic template
+
+MyClass<int> obj2;
+obj2.display(); // Outputs: Specialized template for int
+```
+
+* When using a template, the compiler generates a specific version of the template code for the specified data type(s).
+* This process is known as **template instantiation** .
+
+### Template constraints (C++20)
+
+Use **concepts** to constrain template types, ensuring they meet certain requirements
+
+
+```cpp
+#include <concepts>
+
+template <std::integral T> // Restricts T to integral types
+T add(T a, T b) {
+    return a + b;
+}
+```
+
+###
