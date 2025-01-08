@@ -1,5 +1,18 @@
 # C++ GUIDEBOOK
 
+## Table of Contents
+
+- [Functions](#functions)
+- [Memory Management](#memory-management)
+- [Methods (Member Functions)](#methods-member-functions)
+- [OOP Concepts](#oop-concepts)
+- [Standard Template Library (STL)](#standards-template-library-stl)
+- [Control Flow](#control-flow)
+- [Input/Output](#inputoutput)
+- [Error Handling](#error-handling)
+- [Concurrency](#concurrency)
+- [Templates](#templates)
+
 ## FUNCTIONS
 
 ### Basic function
@@ -44,11 +57,15 @@ std::cout << lambda(3, 5);
 
 ### Checklist
 
-* [ ] Decide return type and parameters.
-* [ ] Use const reference parameters (`const T&`) for non-primitive types to avoid copies.
-* [ ] Inline for small functions to reduce overhead.
+- [ ] Decide return type and parameters.
+- [ ] Use const reference parameters (`const T&`) for non-primitive types to avoid copies.
+- [ ] Inline for small functions to reduce overhead.
 
 ## Memory Management
+
+Smart pointers and move semantics should be used where possible as alternatives to manual memory management. Keep manual memory management to tasks involving data structures
+
+
 
 ### CASE 1: Allocating single object
 
@@ -72,11 +89,15 @@ std::unique_ptr<int> uptr = std::make_unique<int>(42); // Automatically dealloca
 std::shared_ptr<int> sptr = std::make_shared<int>(42); // Shared ownership
 ```
 
+### Move semantics
+
+
+
 ### Checklist - good practice
 
-* [ ] Always pair`new` with`delete`.
-* [ ] Prefer smart pointers for automatic memory management.
-* [ ] Avoid raw pointers unless necessary.
+- [ ] Always pair`new` with`delete`.
+- [ ] Prefer smart pointers for automatic memory management.
+- [ ] Avoid raw pointers unless necessary.
 
 ## Methods (Member functions)
 
@@ -120,8 +141,8 @@ public:
 
 ### Checklist - Keep in mind
 
-* [ ] Use `const` for methods that don't modify the object.
-* [ ] Use `static` for utility functions that don't need object data.
+- [ ] Use `const` for methods that don't modify the object.
+- [ ] Use `static` for utility functions that don't need object data.
 
 ## OOP - Concepts
 
@@ -176,8 +197,8 @@ public:
 
 ### Checklist - good practices
 
-* [ ] Always define destructors as virtual for base classes in polymorphic hierarchies.
-* [ ] Prefer composition over inheritance for better flexibility.
+- [ ] Always define destructors as virtual for base classes in polymorphic hierarchies.
+- [ ] Prefer composition over inheritance for better flexibility.
 
 ## Standards Template Library (stl)
 
@@ -316,8 +337,8 @@ std::cout << add<int>(3, 5);       // Outputs: 8
 std::cout << add<double>(2.5, 3.5); // Outputs: 6.0
 ```
 
-* The compiler generates a separate version of the function for each data type used.
-* Templates support multiple type parameters
+- The compiler generates a separate version of the function for each data type used.
+- Templates support multiple type parameters
 
 ### Class templates
 
@@ -384,13 +405,12 @@ MyClass<int> obj2;
 obj2.display(); // Outputs: Specialized template for int
 ```
 
-* When using a template, the compiler generates a specific version of the template code for the specified data type(s).
-* This process is known as **template instantiation** .
+- When using a template, the compiler generates a specific version of the template code for the specified data type(s).
+- This process is known as **template instantiation** .
 
 ### Template constraints (C++20)
 
 Use **concepts** to constrain template types, ensuring they meet certain requirements
-
 
 ```cpp
 #include <concepts>
