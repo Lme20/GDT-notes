@@ -6,8 +6,8 @@
       "type": "lldb",
       "request": "launch",
       "args": [],
-      "cwd": "/Users/louismercier/Projects/MASTER",
-      "program": "/Users/louismercier/Projects/MASTER/build/Debug/outDebug"
+      "cwd": "/Users/louismercier/Projects/MASTER/COURSES",
+      "program": "/Users/louismercier/Projects/MASTER/COURSES/build/Debug/outDebug"
     }
   ]
 }
