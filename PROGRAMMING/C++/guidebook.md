@@ -13,6 +13,29 @@
 - [Concurrency](#concurrency)
 - [Templates](#templates)
 
+
+
+
+## BASIC SYNTAX
+
+- `<<` output & left shift operator for operations
+- `'\n'` better option to end lines rather than `std::endl`
+- `std::endl` end line, will flush output buffer
+
+### Variables
+
+- 
+
+## HEADER"FILES"
+
+- `<iostream>` - functions for basic input and output operations
+-
+-
+
+
+
+
+
 ## FUNCTIONS
 
 ### Basic function
@@ -65,8 +88,6 @@ std::cout << lambda(3, 5);
 
 Smart pointers and move semantics should be used where possible as alternatives to manual memory management. Keep manual memory management to tasks involving data structures
 
-
-
 ### CASE 1: Allocating single object
 
 ```cpp
@@ -90,8 +111,6 @@ std::shared_ptr<int> sptr = std::make_shared<int>(42); // Shared ownership
 ```
 
 ### Move semantics
-
-
 
 ### Checklist - good practice
 
