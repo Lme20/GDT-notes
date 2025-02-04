@@ -13,28 +13,109 @@
 - [Concurrency](#concurrency)
 - [Templates](#templates)
 
-
-
-
 ## BASIC SYNTAX
 
 - `<<` output & left shift operator for operations
 - `'\n'` better option to end lines rather than `std::endl`
 - `std::endl` end line, will flush output buffer
+- `::` scope resolution operator
 
 ### Variables
 
-- 
+### Const
+
+Keyword that specifies a variable's value should remain constant (tells compiler to prevent anything from modifying it)
+
+- essentally "read-only" for variables
+- constants should be used as often as possible
+
+### Namespaces
+
+Namespaces allows 2 or more entities to share the same name, as long as these are in different namespaces.
+
+```cpp
+namespace first {
+    int x = 1;
+}
+
+namespace second {
+    int x = 2;
+}
+
+int main() {
+    int x = 0;
+
+    std::cout << first::x;
+    std::cout << second::x;
+
+    return 0;
+}
+```
+
+when using `using namespace` in a specific entity, the specified namespace will be used by default.
+
+### Typedef and type aliases
+
+Keyword used to create an aditional name (alias) for another data type.
+
+```cpp
+// pairlist_t alias given to datatype below
+typedef std::vector<std::pair<std::string, int>> pairlist_t; // naming convention _t
+typedef int number_t;
+typedef std::string text_t;
+using letter_t = char; 
+
+int main() {
+
+    // type alias + variable declaration, assign value if needed
+    pairlist_t pairlist; 
+    number_t number = 20;
+    text_t text = 'hello';
+    letter_t letter = 't';
+    return 0;
+}
+```
+
+> typedef is now largely replaced by the `using` keyword, use `using` instead. More suitable for templates.
+
+### Arithmetic operators
+
+returns the result of specific arithmetic operations.
+
+**equals & addition**
+
+`students += 1; (students + 1)`
+`students++; (increment by +1)`
+
+**substraction**
+
+`students = students -1;`
+`students -=1;`
+`students--; (decrement by -1)`
+
+**multiply**
+
+`students = students * 2;`
+`students *= 2;`
+
+**division**
+
+`students = students / 2;`
+`students /= 2;`
+
+**modulus operator**
+
+Get remainder of any division.
+
+`students % 2`
+
+> Order of precedence: 1. parenthesis, 2. multiplication & division, 3. addition & substraction
 
 ## HEADER"FILES"
 
 - `<iostream>` - functions for basic input and output operations
 -
 -
-
-
-
-
 
 ## FUNCTIONS
 
