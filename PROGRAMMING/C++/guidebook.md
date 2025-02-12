@@ -115,7 +115,7 @@ Get remainder of any division.
 
 - `<iostream>` - functions for basic input and output operations.
 - `#pragma once` - causes the current header file to be included only once in a single compilation. (tricky and not very reliable)
--
+- 
 
 ## FUNCTIONS
 
