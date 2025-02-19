@@ -213,3 +213,110 @@ Right is calculated as a right angle to the Y of Forward:
 
 ### Game Object lifecycle management
 
+## TUTORIAL SESSION 1 - GAMEPLAY PATTERNS
+
+### Update method
+
+### Behavioural patterns
+
+**1. Byte code**
+
+- Description
+
+- When to use it:
+
+- Examples:
+
+- Possible risks:
+
+**2. Subclass sandbox**
+
+- Description
+
+- When to use it:
+
+- Examples:
+
+- Possible risks:
+
+**3. Type object**
+
+- Description
+
+- When to use it:
+
+- Examples:
+
+- Possible risks:
+
+### Decoupling patterns
+
+**1. Component:**
+
+- Description
+
+- When to use it:
+
+- Examples:
+
+- Possible risks:
+
+**2.Event queue:**
+
+- Description
+
+- When to use it:
+
+- Examples:
+
+- Possible risks:
+
+**3.Service locatior:**
+
+- Description
+
+- When to use it:
+
+- Examples:
+
+- Possible risks:
+
+### optimisation patterns
+
+**1.Data locality:**
+
+- Description
+
+- When to use it:
+
+- Examples:
+
+- Possible risks:
+**2.Dirty flag:**
+- Description
+
+- When to use it:
+
+- Examples:
+
+- Possible risks:
+
+**3.Object pool:**
+
+- Description
+
+- When to use it:
+
+- Examples:
+
+- Possible risks:
+
+**4.Spatial partition:**
+
+- Description
+
+- When to use it:
+
+- Examples:
+
+- Possible risks:
